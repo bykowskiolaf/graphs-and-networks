@@ -1,5 +1,5 @@
 import random
-from lib.greedy import greedy
+from src.greedy import greedy
 
 
 def lf_ordering(graph, random_tiebreak=False):

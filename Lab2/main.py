@@ -4,12 +4,12 @@ import random
 import time
 import numpy as np
 
-from lib.greedy import greedy
-from lib.sl import SL
-from lib.lf import LF
-from lib.dimacs import dimacs_to_adj
-from lib.graph_gen import generate_all_collections
-from lib.bounds import chromatic_bounds, edge_count
+from src.greedy import greedy
+from src.sl import SL
+from src.lf import LF
+from src.dimacs import dimacs_to_adj
+from src.graph_gen import generate_all_collections
+from src.bounds import chromatic_bounds, edge_count
 
 NUM_TRIALS_DIMACS = 30
 NUM_TRIALS_COLLECTION = 10
@@ -65,8 +65,13 @@ def collection_label(n, m):
 
 print("Wczytywanie grafów DIMACS...")
 dimacs_files = {
+    'dsjc250_5':     'dimacs/dsjc250_5.col',
+    'dsjr500_1c':    'dimacs/dsjr500_1c.col',
     'flat300_28_0': 'dimacs/flat300_28_0.col',
+    'flat1000_50_0': 'dimacs/flat1000_50_0.col',
+    'latin_square': 'dimacs/latin_square.col',
     'le450_25c':    'dimacs/le450_25c.col',
+    'le450_25d':    'dimacs/le450_25d.col',
     'r250_5':       'dimacs/r250_5.col',
 }
 

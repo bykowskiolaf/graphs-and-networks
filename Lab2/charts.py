@@ -60,9 +60,10 @@ dim = stats[stats['type'] == 'DIMACS'].copy()
 graphs = dim['graph'].unique()
 algs = ['GREEDY', 'SL', 'LF']
 
-fig, axes = plt.subplots(1, len(graphs), figsize=(5 * len(graphs), 5), sharey=False)
-if len(graphs) == 1:
-    axes = [axes]
+rows = 2
+cols = int(np.ceil(len(graphs) / rows))
+fig, axes = plt.subplots(rows, cols, figsize=(5 * cols, 9), sharey=False)
+axes = np.array(axes).reshape(-1)
 
 for ax, gname in zip(axes, graphs):
     subset = dim[dim['graph'] == gname]
@@ -81,6 +82,9 @@ for ax, gname in zip(axes, graphs):
     ax.set_ylabel('Liczba kolorów')
     ax.legend(fontsize=8)
     ax.grid(axis='y', alpha=0.3)
+
+for ax in axes[len(graphs):]:
+    ax.set_visible(False)
 
 plt.suptitle('Zadanie 3a) Min / Średnia / Max — grafy DIMACS', y=1.02)
 plt.tight_layout()
