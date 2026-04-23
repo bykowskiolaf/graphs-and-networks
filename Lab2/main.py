@@ -33,7 +33,7 @@ def run_experiment(graph, num_trials):
         results['GREEDY']['colors'].append(gc)
 
         t0 = time.time()
-        _, sc = SL(graph)
+        _, sc = SL(graph, random_tiebreak=True)
         results['SL']['time'] += time.time() - t0
         results['SL']['colors'].append(sc)
 

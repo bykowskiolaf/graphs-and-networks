@@ -99,13 +99,23 @@ print("Zapisano: chart_dimacs_stats.png")
 
 fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(13, 5))
 
+def safe_log_bars(values, eps=1e-4):
+    arr = np.asarray(values, dtype=float)
+    return np.maximum(arr, eps)
+
 for i, alg in enumerate(algs):
     sub = dim[dim['algorithm'] == alg]
-    ax1.bar(np.arange(len(graphs)) + i * 0.25, sub['total_time_s'].values, 0.25, label=alg)
+    ax1.bar(
+        np.arange(len(graphs)) + i * 0.25,
+        safe_log_bars(sub['total_time_s'].values),
+        0.25,
+        label=alg,
+    )
 ax1.set_xticks(np.arange(len(graphs)) + 0.25)
 ax1.set_xticklabels(graphs, rotation=30, ha='right')
 ax1.set_ylabel('Czas [s]')
-ax1.set_title('Czasy — DIMACS')
+ax1.set_title('Czasy — DIMACS (skala log)')
+ax1.set_yscale('log')
 ax1.legend()
 ax1.grid(axis='y', alpha=0.3)
 
@@ -113,11 +123,17 @@ labels_gen = gen['graph'].unique()
 pretty_gen = [pretty_label(l) for l in labels_gen]
 for i, alg in enumerate(algs):
     sub = gen[gen['algorithm'] == alg]
-    ax2.bar(np.arange(len(labels_gen)) + i * 0.25, sub['total_time_s'].values, 0.25, label=alg)
+    ax2.bar(
+        np.arange(len(labels_gen)) + i * 0.25,
+        safe_log_bars(sub['total_time_s'].values),
+        0.25,
+        label=alg,
+    )
 ax2.set_xticks(np.arange(len(labels_gen)) + 0.25)
 ax2.set_xticklabels(pretty_gen, rotation=45, ha='right')
 ax2.set_ylabel('Czas [s]')
-ax2.set_title('Czasy — kolekcje T(n,m)')
+ax2.set_title('Czasy — kolekcje T(n,m) (skala log)')
+ax2.set_yscale('log')
 ax2.legend()
 ax2.grid(axis='y', alpha=0.3)
 
