@@ -1,0 +1,3 @@
+# Projekt opiera się głównie na wbudowanych strukturach Pythona,
+# ale dodajemy networkx do ewentualnego generowania grafów testowych.
+networkx==3.2.1
