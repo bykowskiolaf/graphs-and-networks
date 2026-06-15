@@ -291,6 +291,112 @@ class Graph:
         """Zadanie 4b [cite: 41]"""
         cycles = self.find_hamiltonian_cycles()
         return max(cycles, key=lambda x: x[1]) if cycles else ([], 0)
+    
+        # =========================================================================
+    # POMOCNICZE: POBIERANIE WSZYSTKICH KRAWĘDZI
+    # =========================================================================
+    def get_all_edges(self):
+        edges = []
+        visited = set()
+        for u in self.graph:
+            for v, weight in self.graph[u]:
+                if not self.isDirected:
+                    # Sortowanie krotek, aby uniknąć duplikatów krawędzi w grafie nieskierowanym
+                    edge = tuple(sorted([u, v]))
+                    if edge not in visited:
+                        edges.append((u, v, weight))
+                        visited.add(edge)
+                else:
+                    edges.append((u, v, weight))
+        return edges
+
+    # =========================================================================
+    # ZADANIE 5: DRZEWA SPINAJĄCE (ALGORYTM KRUSKALA)
+    # =========================================================================
+    def kruskal_spanning_tree(self, maximize=False):
+        """Zwraca listę krawędzi oraz sumaryczną wagę drzewa spinającego."""
+        edges = self.get_all_edges()
+        # Sortujemy krawędzie rosnąco dla MST lub malejąco dla MaxST
+        edges.sort(key=lambda x: x[2], reverse=maximize)
+
+        parent = {v: v for v in self.graph}
+        rank = {v: 0 for v in self.graph}
+
+        def find(item):
+            if parent[item] == item:
+                return item
+            else:
+                parent[item] = find(parent[item])
+                return parent[item]
+
+        def union(set1, set2):
+            root1 = find(set1)
+            root2 = find(set2)
+            if root1 != root2:
+                if rank[root1] > rank[root2]:
+                    parent[root2] = root1
+                elif rank[root1] < rank[root2]:
+                    parent[root1] = root2
+                else:
+                    parent[root2] = root1
+                    rank[root1] += 1
+                return True
+            return False
+
+        tree_edges = []
+        tree_weight = 0
+
+        for u, v, w in edges:
+            if union(u, v):
+                tree_edges.append((u, v, w))
+                tree_weight += w
+
+        return tree_edges, tree_weight
+
+    # =========================================================================
+    # ZADANIE 6: ZACHŁANNY PROBLEM KOMIWOJAŻERA (NEAREST NEIGHBOR)
+    # =========================================================================
+    def greedy_tsp(self, start_vertex, maximize=False):
+        """Metoda zachłanna dla TSP: wybiera możliwie najkrótszą/najdłuższą krawędź."""
+        vertices = list(self.graph.keys())
+        if start_vertex not in vertices:
+            return [], float('inf')
+
+        current = start_vertex
+        unvisited = set(vertices)
+        unvisited.remove(current)
+
+        path = [current]
+        total_weight = 0
+
+        while unvisited:
+            next_vertex = None
+            # Szukamy skrajnej wagi w zależności od celu (minimize / maximize)
+            best_weight = -float('inf') if maximize else float('inf')
+
+            for neighbor, weight in self.graph[current]:
+                if neighbor in unvisited:
+                    if (maximize and weight > best_weight) or (not maximize and weight < best_weight):
+                        best_weight = weight
+                        next_vertex = neighbor
+
+            if next_vertex is None:
+                return [], float('inf') # Brak przejścia (graf niespójny)
+
+            path.append(next_vertex)
+            total_weight += best_weight
+            unvisited.remove(next_vertex)
+            current = next_vertex
+
+        # Powrót do miasta początkowego, zamykając cykl
+        return_weight = self.getWeight(current, start_vertex)
+        if return_weight is None:
+            return [], float('inf')
+
+        path.append(start_vertex)
+        total_weight += return_weight
+
+        return path, total_weight
 
 def load_graph_from_file(filename, isDirected=False):
     g = Graph(isDirected=isDirected)
